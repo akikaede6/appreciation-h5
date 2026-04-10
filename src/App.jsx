@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 
-const STORAGE_KEY = "appreciation-review-draft-v6";
+const STORAGE_KEY = "appreciation-review-draft-v7";
 
 function generateId() {
   if (typeof crypto !== "undefined") {
@@ -20,7 +20,7 @@ function generateId() {
 const initialDraft = {
   title: "",
   cover: "",
-  coverOrientation: "portrait", // portrait => 3:4, landscape => 4:3
+  coverOrientation: "portrait",
   comment: "",
   criteria: [],
   customTags: [],
@@ -212,7 +212,7 @@ function StarRating({ value, onChange, readonly = false, size = 28 }) {
             fontSize: size,
             lineHeight: 1,
             padding: 0,
-            color: num <= value ? "#f43f5e" : "#d4d4d8",
+            color: num <= value ? "var(--accent)" : "var(--star-off)",
           }}
         >
           ★
@@ -226,9 +226,9 @@ function SectionCard({ title, subtitle, children }) {
   return (
     <section className="section-card">
       <div style={{ marginBottom: 14 }}>
-        <div style={{ fontSize: 20, fontWeight: 800, color: "#18181b" }}>{title}</div>
+        <div style={{ fontSize: 20, fontWeight: 800, color: "var(--text-strong)" }}>{title}</div>
         {subtitle ? (
-          <div style={{ fontSize: 14, color: "#71717a", marginTop: 6, lineHeight: 1.6 }}>
+          <div style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 6, lineHeight: 1.6 }}>
             {subtitle}
           </div>
         ) : null}
@@ -245,7 +245,7 @@ function FieldLabel({ children }) {
         display: "block",
         fontSize: 14,
         fontWeight: 600,
-        color: "#3f3f46",
+        color: "var(--text-soft)",
         marginBottom: 8,
       }}
     >
@@ -261,12 +261,13 @@ function TextInput(props) {
       style={{
         width: "100%",
         boxSizing: "border-box",
-        border: "1px solid #e4e4e7",
+        border: "1px solid var(--border)",
         borderRadius: 16,
         padding: "12px 14px",
         fontSize: 15,
         outline: "none",
-        background: "#fff",
+        background: "var(--input-bg)",
+        color: "var(--text-strong)",
         ...props.style,
       }}
     />
@@ -280,7 +281,7 @@ function TextArea(props) {
       style={{
         width: "100%",
         boxSizing: "border-box",
-        border: "1px solid #e4e4e7",
+        border: "1px solid var(--border)",
         borderRadius: 16,
         padding: "12px 14px",
         fontSize: 15,
@@ -288,7 +289,8 @@ function TextArea(props) {
         minHeight: 120,
         resize: "vertical",
         fontFamily: "inherit",
-        background: "#fff",
+        background: "var(--input-bg)",
+        color: "var(--text-strong)",
         ...props.style,
       }}
     />
@@ -302,12 +304,13 @@ function SelectInput(props) {
       style={{
         width: "100%",
         boxSizing: "border-box",
-        border: "1px solid #e4e4e7",
+        border: "1px solid var(--border)",
         borderRadius: 16,
         padding: "12px 14px",
         fontSize: 15,
         outline: "none",
-        background: "#fff",
+        background: "var(--input-bg)",
+        color: "var(--text-strong)",
         ...props.style,
       }}
     />
@@ -323,7 +326,7 @@ function PrimaryButton({ children, style, ...props }) {
         border: "none",
         borderRadius: 16,
         padding: "12px 16px",
-        background: "#f43f5e",
+        background: "var(--accent)",
         color: "#fff",
         fontSize: 15,
         fontWeight: 700,
@@ -342,11 +345,11 @@ function SecondaryButton({ children, style, ...props }) {
       {...props}
       type={props.type || "button"}
       style={{
-        border: "1px solid #e4e4e7",
+        border: "1px solid var(--border)",
         borderRadius: 16,
         padding: "12px 16px",
-        background: "#fff",
-        color: "#27272a",
+        background: "var(--card-bg)",
+        color: "var(--text-strong)",
         fontSize: 15,
         fontWeight: 700,
         cursor: "pointer",
@@ -364,7 +367,7 @@ function HeaderBlock({ draft, score, recommendation, scalePx }) {
       <div style={{ display: "flex", flexWrap: "wrap", gap: scalePx(8) }}>
         <span
           style={{
-            background: "#f43f5e",
+            background: "var(--accent)",
             color: "#fff",
             borderRadius: 999,
             padding: `${scalePx(6)}px ${scalePx(12)}px`,
@@ -383,6 +386,7 @@ function HeaderBlock({ draft, score, recommendation, scalePx }) {
           lineHeight: 1.2,
           fontWeight: 900,
           wordBreak: "break-word",
+          color: "var(--export-text-strong)",
         }}
       >
         {draft.title || "未命名作品"}
@@ -397,11 +401,11 @@ function HeaderBlock({ draft, score, recommendation, scalePx }) {
           flexWrap: "wrap",
         }}
       >
-        <div style={{ fontSize: scalePx(52), lineHeight: 1, fontWeight: 900 }}>
+        <div style={{ fontSize: scalePx(52), lineHeight: 1, fontWeight: 900, color: "var(--export-text-strong)" }}>
           {score > 0 ? score.toFixed(1) : "--"}
         </div>
         <div>
-          <div style={{ fontSize: scalePx(24), fontWeight: 900, color: "#f43f5e" }}>
+          <div style={{ fontSize: scalePx(24), fontWeight: 900, color: "var(--accent)" }}>
             {recommendation.level}
           </div>
           <div style={{ marginTop: scalePx(6) }}>
@@ -414,7 +418,7 @@ function HeaderBlock({ draft, score, recommendation, scalePx }) {
         style={{
           marginTop: scalePx(16),
           fontSize: scalePx(14),
-          color: "#52525b",
+          color: "var(--export-text)",
           lineHeight: 1.7,
         }}
       >
@@ -434,19 +438,19 @@ function ShareImage({ draft, score, recommendation, width = 720 }) {
     <div
       style={{
         width,
-        background: "linear-gradient(180deg, #fff1f2 0%, #ffffff 55%, #fff7ed 100%)",
+        background: "var(--export-bg)",
         padding: px(24),
         boxSizing: "border-box",
-        color: "#27272a",
+        color: "var(--export-text-strong)",
       }}
     >
       <div
         style={{
-          background: "rgba(255,255,255,0.95)",
+          background: "var(--export-card)",
           borderRadius: px(28),
           overflow: "hidden",
           boxShadow: "0 16px 40px rgba(15, 23, 42, 0.12)",
-          border: "1px solid rgba(255,255,255,0.8)",
+          border: "1px solid var(--export-border)",
         }}
       >
         <div style={{ padding: px(24) }}>
@@ -459,8 +463,8 @@ function ShareImage({ draft, score, recommendation, width = 720 }) {
                 flexShrink: 0,
                 borderRadius: px(20),
                 overflow: "hidden",
-                border: "1px solid #e4e4e7",
-                background: "#f4f4f5",
+                border: "1px solid var(--border)",
+                background: "var(--panel-soft)",
               }}
             >
               {draft.cover ? (
@@ -477,7 +481,7 @@ function ShareImage({ draft, score, recommendation, width = 720 }) {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "#a1a1aa",
+                    color: "var(--text-faint)",
                     fontSize: px(14),
                   }}
                 >
@@ -509,18 +513,18 @@ function ShareImage({ draft, score, recommendation, width = 720 }) {
                   <div
                     key={item.id}
                     style={{
-                      background: "rgba(244, 63, 94, 0.08)",
+                      background: "var(--export-chip-bg)",
                       borderRadius: px(20),
                       padding: px(14),
                     }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between", gap: px(12) }}>
                       <div>
-                        <div style={{ fontWeight: 700, fontSize: px(16) }}>
+                        <div style={{ fontWeight: 700, fontSize: px(16), color: "var(--export-text-strong)" }}>
                           {item.name || "未命名维度"}
                         </div>
                       </div>
-                      <div style={{ fontWeight: 900, fontSize: px(28) }}>{item.score}.0</div>
+                      <div style={{ fontWeight: 900, fontSize: px(28), color: "var(--export-text-strong)" }}>{item.score}.0</div>
                     </div>
                     <div style={{ marginTop: px(10) }}>
                       <StarRating value={item.score} readonly size={px(24)} />
@@ -531,12 +535,12 @@ function ShareImage({ draft, score, recommendation, width = 720 }) {
             ) : (
               <div
                 style={{
-                  border: "1px dashed #d4d4d8",
+                  border: "1px dashed var(--border)",
                   borderRadius: px(20),
                   padding: px(18),
                   fontSize: px(14),
-                  color: "#71717a",
-                  background: "#fafafa",
+                  color: "var(--export-text)",
+                  background: "var(--panel-soft)",
                 }}
               >
                 还没有添加评分维度
@@ -548,14 +552,14 @@ function ShareImage({ draft, score, recommendation, width = 720 }) {
             style={{
               marginTop: px(20),
               borderRadius: px(20),
-              background: "#fafafa",
+              background: "var(--export-panel)",
               padding: px(18),
             }}
           >
             <div
               style={{
                 fontSize: px(12),
-                color: "#a1a1aa",
+                color: "var(--text-faint)",
                 letterSpacing: "0.25em",
                 textTransform: "uppercase",
                 fontWeight: 700,
@@ -569,6 +573,7 @@ function ShareImage({ draft, score, recommendation, width = 720 }) {
                 whiteSpace: "pre-wrap",
                 lineHeight: 1.8,
                 fontSize: px(16),
+                color: "var(--export-text-strong)",
               }}
             >
               {draft.comment || "这次还没有补充评价。"}
@@ -590,8 +595,8 @@ function ShareImage({ draft, score, recommendation, width = 720 }) {
                 style={{
                   borderRadius: 999,
                   padding: `${px(7)}px ${px(12)}px`,
-                  background: "#ffedd5",
-                  color: "#c2410c",
+                  background: "var(--tag-bg)",
+                  color: "var(--tag-text)",
                   fontSize: px(14),
                   fontWeight: 700,
                 }}
@@ -683,19 +688,74 @@ export default function App() {
   }
 
   return (
-    <div
+    <div className="theme-root"
       style={{
         minHeight: "100vh",
-        background: "linear-gradient(180deg, #fff1f2 0%, #ffffff 50%, #fff7ed 100%)",
+        background: "var(--app-bg)",
         padding: 12,
         boxSizing: "border-box",
         fontFamily:
           'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-        color: "#18181b",
+        color: "var(--text-strong)",
+        colorScheme: "light dark",
       }}
     >
       <style>{`
         * { box-sizing: border-box; }
+        .theme-root {
+          --app-bg: linear-gradient(180deg, #fff1f2 0%, #ffffff 50%, #fff7ed 100%);
+          --card-bg: #ffffff;
+          --input-bg: #ffffff;
+          --panel-soft: #fafafa;
+          --panel-strong: linear-gradient(90deg, #fff1f2 0%, #fff7ed 100%);
+          --preview-bg: #f4f4f5;
+          --chip-bg: #f4f4f5;
+          --tag-bg: #ffedd5;
+          --tag-text: #c2410c;
+          --accent: #f43f5e;
+          --border: #e4e4e7;
+          --star-off: #d4d4d8;
+          --text-strong: #18181b;
+          --text-soft: #3f3f46;
+          --text-muted: #71717a;
+          --text-faint: #a1a1aa;
+          --modal-backdrop: rgba(24, 24, 27, 0.55);
+          --export-bg: linear-gradient(180deg, #fff1f2 0%, #ffffff 55%, #fff7ed 100%);
+          --export-card: rgba(255,255,255,0.95);
+          --export-border: rgba(255,255,255,0.8);
+          --export-panel: #fafafa;
+          --export-chip-bg: rgba(244, 63, 94, 0.08);
+          --export-text-strong: #27272a;
+          --export-text: #52525b;
+        }
+        @media (prefers-color-scheme: dark) {
+          .theme-root {
+            --app-bg: linear-gradient(180deg, #18181b 0%, #09090b 55%, #111827 100%);
+            --card-bg: #18181b;
+            --input-bg: #09090b;
+            --panel-soft: #09090b;
+            --panel-strong: linear-gradient(90deg, rgba(244,63,94,0.18) 0%, rgba(249,115,22,0.16) 100%);
+            --preview-bg: #09090b;
+            --chip-bg: #27272a;
+            --tag-bg: rgba(251,146,60,0.16);
+            --tag-text: #fdba74;
+            --accent: #fb7185;
+            --border: #3f3f46;
+            --star-off: #52525b;
+            --text-strong: #fafafa;
+            --text-soft: #e4e4e7;
+            --text-muted: #a1a1aa;
+            --text-faint: #71717a;
+            --modal-backdrop: rgba(0, 0, 0, 0.72);
+            --export-bg: linear-gradient(180deg, #18181b 0%, #09090b 60%, #111827 100%);
+            --export-card: rgba(24,24,27,0.96);
+            --export-border: rgba(63,63,70,0.9);
+            --export-panel: #09090b;
+            --export-chip-bg: rgba(244, 63, 94, 0.16);
+            --export-text-strong: #fafafa;
+            --export-text: #d4d4d8;
+          }
+        }
         .app-shell {
           max-width: 1180px;
           margin: 0 auto;
@@ -709,11 +769,11 @@ export default function App() {
           grid-template-columns: minmax(0, 1fr);
         }
         .section-card {
-          background: #ffffff;
+          background: var(--card-bg);
           border-radius: 24px;
           padding: 18px;
-          box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-          border: 1px solid rgba(255,255,255,0.8);
+          box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+          border: 1px solid var(--border);
         }
         .top-badges {
           display: flex;
@@ -721,12 +781,13 @@ export default function App() {
           flex-wrap: wrap;
         }
         .top-badge {
-          background: #f4f4f5;
-          color: #52525b;
+          background: var(--chip-bg);
+          color: var(--text-soft);
           border-radius: 999px;
           padding: 7px 12px;
           font-size: 13px;
           font-weight: 700;
+          border: 1px solid var(--border);
         }
         .two-col {
           display: grid;
@@ -743,8 +804,8 @@ export default function App() {
         .preview-box {
           overflow: auto;
           border-radius: 20px;
-          border: 1px solid #e4e4e7;
-          background: #f4f4f5;
+          border: 1px solid var(--border);
+          background: var(--preview-bg);
           padding: 12px;
           display: flex;
           justify-content: center;
@@ -758,6 +819,10 @@ export default function App() {
           display: flex;
           gap: 8px;
           flex-wrap: wrap;
+        }
+        input::placeholder,
+        textarea::placeholder {
+          color: var(--text-faint);
         }
         @media (min-width: 860px) {
           .editor-grid {
@@ -787,7 +852,7 @@ export default function App() {
       <div className="app-shell">
         <SectionCard
           title="赏析推荐"
-          subtitle="同一套代码同时适配手机和电脑。适合写影视剧、广播剧、乙游、小说等内容的评分和赏析图。"
+          subtitle="同一套代码同时适配手机和电脑，并会跟随浏览器深浅色模式自动切换。"
         >
           <div className="top-badges">
             {[saveMessage, "无后端", "本机草稿缓存", "电脑手机双端适配"].map((text) => (
@@ -809,13 +874,13 @@ export default function App() {
                       width: "100%",
                       aspectRatio: draft.coverOrientation === "landscape" ? "4 / 3" : "3 / 4",
                       borderRadius: 20,
-                      border: "1px solid #e4e4e7",
+                      border: "1px solid var(--border)",
                       overflow: "hidden",
-                      background: "#fafafa",
+                      background: "var(--panel-soft)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      color: "#a1a1aa",
+                      color: "var(--text-faint)",
                       fontSize: 14,
                     }}
                   >
@@ -891,10 +956,10 @@ export default function App() {
                     <div
                       key={item.id}
                       style={{
-                        border: "1px solid #e4e4e7",
+                        border: "1px solid var(--border)",
                         borderRadius: 20,
                         padding: 14,
-                        background: "#fff",
+                        background: "var(--card-bg)",
                       }}
                     >
                       <div className="two-col">
@@ -938,8 +1003,8 @@ export default function App() {
                         }}
                       >
                         <div>
-                          <div style={{ fontSize: 13, color: "#71717a" }}>当前评分</div>
-                          <div style={{ fontSize: 32, fontWeight: 900 }}>{item.score}.0</div>
+                          <div style={{ fontSize: 13, color: "var(--text-muted)" }}>当前评分</div>
+                          <div style={{ fontSize: 32, fontWeight: 900, color: "var(--text-strong)" }}>{item.score}.0</div>
                         </div>
                         <SecondaryButton
                           onClick={() => dispatch({ type: "remove_criterion", id: item.id })}
@@ -959,11 +1024,11 @@ export default function App() {
                 ) : (
                   <div
                     style={{
-                      border: "1px dashed #d4d4d8",
+                      border: "1px dashed var(--border)",
                       borderRadius: 20,
                       padding: 16,
-                      background: "#fafafa",
-                      color: "#71717a",
+                      background: "var(--panel-soft)",
+                      color: "var(--text-muted)",
                       fontSize: 14,
                       lineHeight: 1.8,
                     }}
@@ -974,10 +1039,10 @@ export default function App() {
 
                 <div
                   style={{
-                    background: "#fafafa",
+                    background: "var(--panel-soft)",
                     borderRadius: 20,
                     padding: 14,
-                    border: "1px solid #f4f4f5",
+                    border: "1px solid var(--border)",
                   }}
                 >
                   <FieldLabel>新增评分维度</FieldLabel>
@@ -997,7 +1062,7 @@ export default function App() {
               <div style={{ display: "grid", gap: 14 }}>
                 <div
                   style={{
-                    background: "linear-gradient(90deg, #fff1f2 0%, #fff7ed 100%)",
+                    background: "var(--panel-strong)",
                     borderRadius: 20,
                     padding: 16,
                   }}
@@ -1012,15 +1077,15 @@ export default function App() {
                     }}
                   >
                     <div>
-                      <div style={{ fontSize: 13, color: "#71717a" }}>综合分</div>
-                      <div style={{ fontSize: 48, lineHeight: 1, fontWeight: 900 }}>
+                      <div style={{ fontSize: 13, color: "var(--text-muted)" }}>综合分</div>
+                      <div style={{ fontSize: 48, lineHeight: 1, fontWeight: 900, color: "var(--text-strong)" }}>
                         {finalScore > 0 ? finalScore.toFixed(1) : "--"}
                       </div>
                     </div>
 
                     <div style={{ textAlign: "right" }}>
-                      <div style={{ fontSize: 13, color: "#71717a" }}>推荐结论</div>
-                      <div style={{ fontSize: 28, fontWeight: 900, color: "#f43f5e" }}>
+                      <div style={{ fontSize: 13, color: "var(--text-muted)" }}>推荐结论</div>
+                      <div style={{ fontSize: 28, fontWeight: 900, color: "var(--accent)" }}>
                         {recommendation.level}
                       </div>
                       <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end" }}>
@@ -1029,21 +1094,21 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div style={{ marginTop: 14, fontSize: 14, lineHeight: 1.7, color: "#52525b" }}>
+                  <div style={{ marginTop: 14, fontSize: 14, lineHeight: 1.7, color: "var(--text-soft)" }}>
                     {recommendation.tone}
                   </div>
                 </div>
 
                 <div
                   style={{
-                    border: "1px solid #f4f4f5",
+                    border: "1px solid var(--border)",
                     borderRadius: 20,
-                    background: "#fafafa",
+                    background: "var(--panel-soft)",
                     padding: 14,
                   }}
                 >
                   <div
-                    style={{ fontSize: 14, fontWeight: 700, color: "#27272a", marginBottom: 8 }}
+                    style={{ fontSize: 14, fontWeight: 700, color: "var(--text-strong)", marginBottom: 8 }}
                   >
                     推荐标签
                   </div>
@@ -1051,7 +1116,7 @@ export default function App() {
                   <div
                     style={{
                       fontSize: 13,
-                      color: "#71717a",
+                      color: "var(--text-muted)",
                       lineHeight: 1.7,
                       marginBottom: 10,
                     }}
@@ -1085,8 +1150,8 @@ export default function App() {
                             gap: 6,
                             borderRadius: 999,
                             padding: "7px 12px",
-                            background: "#ffedd5",
-                            color: "#c2410c",
+                            background: "var(--tag-bg)",
+                            color: "var(--tag-text)",
                             fontSize: 13,
                             fontWeight: 700,
                           }}
@@ -1098,7 +1163,7 @@ export default function App() {
                             style={{
                               border: "none",
                               background: "transparent",
-                              color: "#c2410c",
+                              color: "var(--tag-text)",
                               cursor: "pointer",
                               fontWeight: 900,
                               padding: 0,
@@ -1110,7 +1175,7 @@ export default function App() {
                         </span>
                       ))
                     ) : (
-                      <span style={{ fontSize: 13, color: "#a1a1aa" }}>还没有自定义 tag</span>
+                      <span style={{ fontSize: 13, color: "var(--text-faint)" }}>还没有自定义 tag</span>
                     )}
                   </div>
                 </div>
@@ -1165,7 +1230,7 @@ export default function App() {
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(24, 24, 27, 0.55)",
+            background: "var(--modal-backdrop)",
             padding: 16,
             display: "flex",
             alignItems: "center",
@@ -1179,10 +1244,11 @@ export default function App() {
               width: "min(980px, 100%)",
               maxHeight: "90vh",
               overflow: "auto",
-              background: "#fff",
+              background: "var(--card-bg)",
               borderRadius: 24,
               padding: 16,
               boxSizing: "border-box",
+              border: "1px solid var(--border)",
             }}
           >
             <div
@@ -1195,7 +1261,7 @@ export default function App() {
                 flexWrap: "wrap",
               }}
             >
-              <div style={{ fontSize: 20, fontWeight: 800 }}>分享图预览</div>
+              <div style={{ fontSize: 20, fontWeight: 800, color: "var(--text-strong)" }}>分享图预览</div>
               <div className="inline-actions">
                 <SecondaryButton onClick={() => setShowPreview(false)}>关闭</SecondaryButton>
                 <PrimaryButton onClick={exportImage}>导出 PNG</PrimaryButton>
@@ -1206,8 +1272,8 @@ export default function App() {
               style={{
                 overflow: "auto",
                 borderRadius: 20,
-                border: "1px solid #e4e4e7",
-                background: "#f4f4f5",
+                border: "1px solid var(--border)",
+                background: "var(--preview-bg)",
                 padding: 12,
                 display: "flex",
                 justifyContent: "center",
@@ -1226,3 +1292,4 @@ export default function App() {
     </div>
   );
 }
+
